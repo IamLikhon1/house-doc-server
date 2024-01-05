@@ -27,11 +27,21 @@ async function run() {
         await client.connect();
 
         const testimonialDocCollection = client.db('House-Doc-Data').collection('Testimonial');
+        const doctorsDocCollection= client.db('House-Doc-Data').collection('doctorsData');
 
+        // get the testimonial data from mongodb 
         app.get('/getTestimonialData', async (req, res) => {
             const testimonial = await testimonialDocCollection.find().toArray();
             res.send(testimonial)
+        });
+
+        // get api for all doctors data from mongodb
+        app.get('/getDoctorsData', async (req, res) => {
+            const doctorsData = await doctorsDocCollection.find().toArray();
+            res.send(doctorsData)
         })
+
+        
 
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
