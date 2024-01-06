@@ -9,7 +9,7 @@ require("dotenv").config();
 app.use(cors());
 app.use(express.json());
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.snwbd1q.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -37,8 +37,24 @@ async function run() {
 
         // get api for all doctors data from mongodb
         app.get('/getDoctorsData', async (req, res) => {
-            const doctorsData = await doctorsDocCollection.find().toArray();
+            const search =req.query.search
+            const sort =req.query.sort
+            const query = { name: { $regex: `${search}`, $options: 'i' } };
+            const sortOptions={
+                sort:{
+                    'fee':sort==='asc'? 1 : -1    
+                }
+            }
+            const doctorsData = await doctorsDocCollection.find(query,sortOptions).toArray();
             res.send(doctorsData)
+        });
+
+        // specific get api for single doctors from mongodb
+        app.get('/doctor/:id',async(req,res)=>{
+            const id=req.params.id;
+            const query={_id:new ObjectId(id)}
+            const result=await doctorsDocCollection.findOne(query);
+            res.send(result);
         })
 
         
