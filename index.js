@@ -27,7 +27,8 @@ async function run() {
         await client.connect();
 
         const testimonialDocCollection = client.db('House-Doc-Data').collection('Testimonial');
-        const doctorsDocCollection= client.db('House-Doc-Data').collection('doctorsData');
+        const doctorsDocCollection = client.db('House-Doc-Data').collection('doctorsData');
+        const reviewDocCollection = client.db('House-Doc-Data').collection('reviewsData');
 
         // get the testimonial data from mongodb 
         app.get('/getTestimonialData', async (req, res) => {
@@ -37,27 +38,41 @@ async function run() {
 
         // get api for all doctors data from mongodb
         app.get('/getDoctorsData', async (req, res) => {
-            const search =req.query.search
-            const sort =req.query.sort
+            const search = req.query.search
+            const sort = req.query.sort
             const query = { name: { $regex: `${search}`, $options: 'i' } };
-            const sortOptions={
-                sort:{
-                    'fee':sort==='asc'? 1 : -1    
+            const sortOptions = {
+                sort: {
+                    'fee': sort === 'asc' ? 1 : -1
                 }
             }
-            const doctorsData = await doctorsDocCollection.find(query,sortOptions).toArray();
+            const doctorsData = await doctorsDocCollection.find(query, sortOptions).toArray();
             res.send(doctorsData)
         });
 
         // specific get api for single doctors from mongodb
-        app.get('/doctor/:id',async(req,res)=>{
-            const id=req.params.id;
-            const query={_id:new ObjectId(id)}
-            const result=await doctorsDocCollection.findOne(query);
+        app.get('/doctor/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await doctorsDocCollection.findOne(query);
             res.send(result);
+        });
+
+        // post api for single doctor review
+
+        app.post('/postReview', async (req, res) => {
+            const userDataStore = req.body;
+            const result = await reviewDocCollection.insertOne(userDataStore)
+            res.send(result)
+        });
+
+        // get api for doctors review  
+        app.get('/getReview', async (req, res) => {
+            const getReview = await reviewDocCollection.find().toArray();
+            res.send(getReview)
         })
 
-        
+
 
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
