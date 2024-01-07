@@ -70,6 +70,15 @@ async function run() {
         app.get('/getReview', async (req, res) => {
             const getReview = await reviewDocCollection.find().toArray();
             res.send(getReview)
+        });
+
+        // delete api for doctor review
+
+        app.delete('/deleteReview/:id', async (req, res) => {
+            const id=req.params.id;
+            const query = {_id:new ObjectId(id)};
+            const result = await reviewDocCollection.deleteOne(query);
+            res.send(result);
         })
 
 
