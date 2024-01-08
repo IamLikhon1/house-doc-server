@@ -29,6 +29,7 @@ async function run() {
         const testimonialDocCollection = client.db('House-Doc-Data').collection('Testimonial');
         const doctorsDocCollection = client.db('House-Doc-Data').collection('doctorsData');
         const reviewDocCollection = client.db('House-Doc-Data').collection('reviewsData');
+        const servicesDocCollection = client.db('House-Doc-Data').collection('ServiceAllData');
 
         // get the testimonial data from mongodb 
         app.get('/getTestimonialData', async (req, res) => {
@@ -75,11 +76,16 @@ async function run() {
         // delete api for doctor review
 
         app.delete('/deleteReview/:id', async (req, res) => {
-            const id=req.params.id;
-            const query = {_id:new ObjectId(id)};
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
             const result = await reviewDocCollection.deleteOne(query);
             res.send(result);
-        })
+        });
+        // get all services data from mongodb
+        app.get('/getAllServiceData', async (req, res) => {
+            const getService = await servicesDocCollection.find().toArray();
+            res.send(getService)
+        });
 
 
 
