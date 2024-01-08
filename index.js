@@ -84,8 +84,16 @@ async function run() {
         });
         // get all services data from mongodb
         app.get('/getAllServiceData', async (req, res) => {
-            const getService = await servicesDocCollection.find().toArray();
-            res.send(getService)
+            const search = req.query.search
+            const sort = req.query.sort
+            const query = { service_name: { $regex: `${search}`, $options: 'i' } };
+            const sortOptions = {
+                sort: {
+                    'fee': sort === 'asc' ? 1 : -1
+                }
+            }
+            const doctorsData = await servicesDocCollection.find(query, sortOptions).toArray();
+            res.send(doctorsData)
         });
 
         // post api for user sent service data
