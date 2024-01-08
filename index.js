@@ -30,6 +30,7 @@ async function run() {
         const doctorsDocCollection = client.db('House-Doc-Data').collection('doctorsData');
         const reviewDocCollection = client.db('House-Doc-Data').collection('reviewsData');
         const servicesDocCollection = client.db('House-Doc-Data').collection('ServiceAllData');
+        const userServiceDocCollection = client.db('House-Doc-Data').collection('userServicesData');
 
         // get the testimonial data from mongodb 
         app.get('/getTestimonialData', async (req, res) => {
@@ -85,6 +86,13 @@ async function run() {
         app.get('/getAllServiceData', async (req, res) => {
             const getService = await servicesDocCollection.find().toArray();
             res.send(getService)
+        });
+
+        // post api for user sent service data
+        app.post('/postUserServiceData', async (req, res) => {
+            const userDataStoreService = req.body;
+            const result = await userServiceDocCollection.insertOne(userDataStoreService)
+            res.send(result)
         });
 
 
