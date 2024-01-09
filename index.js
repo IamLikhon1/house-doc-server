@@ -59,9 +59,21 @@ async function run() {
             const result = await doctorsDocCollection.findOne(query);
             res.send(result);
         });
+        // post api for doctors for dashboard 
+        app.post('/postDoctorData', async (req, res) => {
+            const userDoctorDataStore = req.body;
+            const result = await doctorsDocCollection.insertOne(userDoctorDataStore)
+            res.send(result)
+        });
+        // delete data for doctors for dashboard
+        app.delete('/deleteDoctorData/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await doctorsDocCollection.deleteOne(query);
+            res.send(result);
+        });
 
         // post api for single doctor review
-
         app.post('/postReview', async (req, res) => {
             const userDataStore = req.body;
             const result = await reviewDocCollection.insertOne(userDataStore)
@@ -75,13 +87,13 @@ async function run() {
         });
 
         // delete api for doctor review
-
         app.delete('/deleteReview/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) };
             const result = await reviewDocCollection.deleteOne(query);
             res.send(result);
         });
+
         // get all services data from mongodb
         app.get('/getAllServiceData', async (req, res) => {
             const search = req.query.search
@@ -96,13 +108,40 @@ async function run() {
             res.send(doctorsData)
         });
 
-        // post api for user sent service data
+        // post api for services data for dashboard
+        app.post('/postServicesData', async (req, res) => {
+            const servicesDataStore = req.body;
+            const result = await servicesDocCollection.insertOne(servicesDataStore)
+            res.send(result)
+        });
+
+        // delete api for  services data for dashboard
+        app.delete('/deleteServicesData/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await servicesDocCollection.deleteOne(query);
+            res.send(result);
+        });
+
+        // post api for user sent appointment data for user
         app.post('/postUserServiceData', async (req, res) => {
             const userDataStoreService = req.body;
             const result = await userServiceDocCollection.insertOne(userDataStoreService)
             res.send(result)
         });
+        // get api for user sent appointment for dashboard
+        app.get('/getAllUserSentData', async (req, res) => {
+            const getAllUserSentData = await userServiceDocCollection.find().toArray();
+            res.send(getAllUserSentData)
+        });
 
+        // delete api for user sent appointment data for dashboard
+        app.delete('/deleteUserSentData/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await userServiceDocCollection.deleteOne(query);
+            res.send(result);
+        });
 
 
         // Send a ping to confirm a successful connection
